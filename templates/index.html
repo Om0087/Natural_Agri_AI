@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KrushiMitra - Natural Farming AI Assistant</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Progressive Web App (PWA) Manifest & Meta Tags -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#064e3b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KrushiMitra">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    <link rel="icon" type="image/png" href="/static/icons/favicon.png">
+    <!-- Custom High-Contrast CSS with cache bust -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4.0">
+</head>
+<body class="h-full flex flex-col antialiased">
+
+    <!-- Main Layout Container -->
+    <div class="flex flex-row h-screen w-screen overflow-hidden relative bg-[#edf4ee]">
+
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+        <!-- Left Dark Sidebar -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-80 h-full shrink-0 bg-[#072e21] text-white z-40 flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 border-r border-emerald-900/50 shadow-2xl">
+            
+            <!-- Sidebar Header -->
+            <div class="p-5 flex items-center justify-between border-b border-emerald-800/60 bg-[#052319]">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-600 flex items-center justify-center text-2xl shadow-md border border-emerald-400">
+                        🌱
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg tracking-wide text-white flex items-center gap-2">
+                            KrushiMitra <span class="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-600">AI 3.0</span>
+                        </h1>
+                        <p class="text-xs text-emerald-300" id="sidebarSubtitle">Natural Farming Assistant</p>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-emerald-300 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- New Chat Button -->
+            <div class="p-4 pb-2">
+                <button onclick="startNewChat()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-md transition flex items-center justify-center gap-2 border border-emerald-400">
+                    <i class="fa-solid fa-plus text-sm"></i>
+                    <span id="sidebarNewChatText">New Conversation</span>
+                </button>
+            </div>
+
+            <!-- PWA Sidebar Install Button (Shown on browsers supporting PWA install) -->
+            <div id="sidebarPwaInstallContainer" class="px-4 pb-2 hidden">
+                <button type="button" onclick="installKrushiMitraPWA()" class="w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold border border-amber-500/40 text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download text-amber-400"></i>
+                    <span id="sidebarPwaText">Install Mobile App (PWA)</span>
+                </button>
+            </div>
+
+            <!-- Smart Agricultural Feature Hub (5 Interactive Tools) -->
+            <div class="px-3.5 py-1">
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <h3 class="text-[11px] font-extrabold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5" id="toolsHeading">
+                        <i class="fa-solid fa-bolt text-amber-400"></i>
+                        <span>મુખ્ય સુવિધાઓ (Smart Tools)</span>
+                    </h3>
+                    <span class="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold border border-emerald-700">5 TOOLS</span>
+                </div>
+                
+                <div class="space-y-1.5 text-xs font-semibold">
+                    <!-- Tool 1: Live Weather & Spray Advisory -->
+                    <button onclick="openWeatherModal()" class="w-full p-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-800 text-emerald-100 flex items-center justify-between border border-emerald-800/80 hover:border-emerald-500 transition group shadow-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-base group-hover:scale-110 transition-transform shrink-0">🌦️</span>
+                            <div class="text-left truncate">
+                                <p class="font-bold text-white text-xs truncate" id="toolWeatherTitle">લાઈવ હવામાન & સ્પ્રે</p>
+                                <p class="text-[10px] text-emerald-300 truncate" id="toolWeatherSub">વરસાદ, ભેજ અને સલાહ</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] bg-sky-900/80 text-sky-200 px-1.5 py-0.5 rounded-md border border-sky-600 font-bold shrink-0">LIVE</span>
+                    </button>
+
+                    <!-- Tool 2: APMC Mandi Rates -->
+                    <button onclick="openMandiModal()" class="w-full p-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-800 text-emerald-100 flex items-center justify-between border border-emerald-800/80 hover:border-emerald-500 transition group shadow-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-base group-hover:scale-110 transition-transform shrink-0">📊</span>
+                            <div class="text-left truncate">
+                                <p class="font-bold text-white text-xs truncate" id="toolMandiTitle">APMC યાર્ડ ભાવ</p>
+                                <p class="text-[10px] text-emerald-300 truncate" id="toolMandiSub">ગોંડલ-રાજકોટ તાજા ભાવ</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] bg-amber-900/80 text-amber-200 px-1.5 py-0.5 rounded-md border border-amber-600 font-bold shrink-0">MARKET</span>
+                    </button>
+
+                    <!-- Tool 3: 90-Day Crop Calendar -->
+                    <button onclick="openCropCalendarModal()" class="w-full p-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-800 text-emerald-100 flex items-center justify-between border border-emerald-800/80 hover:border-emerald-500 transition group shadow-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-base group-hover:scale-110 transition-transform shrink-0">📅</span>
+                            <div class="text-left truncate">
+                                <p class="font-bold text-white text-xs truncate" id="toolCalendarTitle">૯૦ દિવસ પાક કેલેન્ડર</p>
+                                <p class="text-[10px] text-emerald-300 truncate" id="toolCalendarSub">વાવણીથી કાપણી શિડ્યુલ</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] bg-emerald-800 text-emerald-200 px-1.5 py-0.5 rounded-md border border-emerald-600 font-bold shrink-0">SPNF</span>
+                    </button>
+
+                    <!-- Tool 4: Fertilizer Calculator -->
+                    <button onclick="openFertilizerCalculator()" class="w-full p-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-800 text-emerald-100 flex items-center justify-between border border-emerald-800/80 hover:border-emerald-500 transition group shadow-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-base group-hover:scale-110 transition-transform shrink-0">🧪</span>
+                            <div class="text-left truncate">
+                                <p class="font-bold text-white text-xs truncate" id="toolCalcTitle">ખાતર કેલ્ક્યુલેટર</p>
+                                <p class="text-[10px] text-emerald-300 truncate" id="toolCalcSub">વીઘા દીઠ જીવામૃત માપ</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] bg-emerald-800 text-emerald-200 px-1.5 py-0.5 rounded-md border border-emerald-600 font-bold shrink-0">CALC</span>
+                    </button>
+
+                    <!-- Tool 5: Organic Medicine Recipes & Subsidy -->
+                    <button onclick="openMedicineLibraryModal()" class="w-full p-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-800 text-emerald-100 flex items-center justify-between border border-emerald-800/80 hover:border-emerald-500 transition group shadow-xs">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="text-base group-hover:scale-110 transition-transform shrink-0">🌿</span>
+                            <div class="text-left truncate">
+                                <p class="font-bold text-white text-xs truncate" id="toolMedicineTitle">દેશી દવા લાઈબ્રેરી</p>
+                                <p class="text-[10px] text-emerald-300 truncate" id="toolMedicineSub">નીમાસ્ત્ર, અગ્નિઅસ્ત્ર & સહાય</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] bg-teal-900/80 text-teal-200 px-1.5 py-0.5 rounded-md border border-teal-600 font-bold shrink-0">RECIPE</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Topics Filter Grid -->
+            <div class="px-4 py-2">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 px-1" id="quickTopicsHeading">Quick Topics</h3>
+                <div class="space-y-1.5 text-xs font-medium">
+                    <button onclick="sendQuickTopic('jeevamrut')" class="w-full text-left p-3 rounded-xl bg-emerald-950/70 hover:bg-emerald-800 text-emerald-100 flex items-center gap-3 border border-emerald-800/80 transition">
+                        <span class="text-base">🧪</span>
+                        <span class="truncate" id="topic-jeevamrut-text">Jeevamrut (જીવામૃત)</span>
+                    </button>
+                    <button onclick="sendQuickTopic('pest')" class="w-full text-left p-3 rounded-xl bg-emerald-950/70 hover:bg-emerald-800 text-emerald-100 flex items-center gap-3 border border-emerald-800/80 transition">
+                        <span class="text-base">🌿</span>
+                        <span class="truncate" id="topic-pest-text">Pest Control (કીટ નિયંત્રણ)</span>
+                    </button>
+                    <button onclick="sendQuickTopic('soil')" class="w-full text-left p-3 rounded-xl bg-emerald-950/70 hover:bg-emerald-800 text-emerald-100 flex items-center gap-3 border border-emerald-800/80 transition">
+                        <span class="text-base">🌾</span>
+                        <span class="truncate" id="topic-soil-text">Soil Health (જમીનની સુધારણા)</span>
+                    </button>
+                    <button onclick="sendQuickTopic('beejamrut')" class="w-full text-left p-3 rounded-xl bg-emerald-950/70 hover:bg-emerald-800 text-emerald-100 flex items-center gap-3 border border-emerald-800/80 transition">
+                        <span class="text-base">🐄</span>
+                        <span class="truncate" id="topic-beejamrut-text">Beejamrut (બીજામૃત)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Saved History Session List -->
+            <div class="flex-1 overflow-y-auto px-4 py-2 space-y-1">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 px-1" id="recentChatsHeading">Recent Chats</h3>
+                <div id="historyList" class="space-y-1 text-xs">
+                    <!-- Dynamic History Items render here -->
+                </div>
+            </div>
+
+            <!-- Sidebar Footer: Status & Language Toggle (2 Languages: Gujarati & English) -->
+            <div class="p-4 border-t border-emerald-800/80 bg-[#052319] space-y-3">
+                <!-- Status Pill -->
+                <div id="statusBadge" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-950 border border-emerald-700 text-xs text-emerald-300">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" id="statusDot"></span>
+                    <span id="statusText" class="truncate font-semibold">Checking Server...</span>
+                </div>
+
+                <!-- 2-Language Selector (Clean, prominent toggle) -->
+                <div class="flex items-center justify-between bg-emerald-950 p-1 rounded-xl border border-emerald-700 text-xs gap-1">
+                    <button onclick="setLanguage('Gujarati')" id="lang-Gujarati" class="lang-btn flex-1 py-1.5 rounded-lg font-bold transition text-center text-white bg-emerald-600 shadow">ગુજરાતી</button>
+                    <button onclick="setLanguage('English')" id="lang-English" class="lang-btn flex-1 py-1.5 rounded-lg font-bold transition text-center text-emerald-300 hover:text-white">English</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+
+            <!-- Top Header Bar -->
+            <header class="bg-[#093829] text-white px-4 py-3 sm:px-6 flex items-center justify-between shadow-md border-b border-emerald-800">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-emerald-300 hover:text-white p-2 rounded-lg bg-emerald-900 border border-emerald-700">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                    <div>
+                        <h2 class="font-extrabold text-lg text-white flex items-center gap-2">
+                            <span>🌱 KrushiMitra AI</span>
+                        </h2>
+                        <p class="text-xs text-emerald-300" id="headerSubtitle">Natural Farming Expert • પ્રાકૃતિક ખેતી આસિસ્ટન્ટ</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <!-- Live Weather & Spray Advisory Header Pill -->
+                    <button type="button" onclick="openWeatherModal()" id="headerWeatherPillBtn" title="Live Weather & Spray Advisory (હવામાન & સ્પ્રે સલાહ)" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/80 text-xs text-emerald-200 transition shadow-xs group cursor-pointer">
+                        <span class="text-base group-hover:scale-110 transition-transform">🌦️</span>
+                        <div class="text-left font-bold text-white flex items-center gap-1.5">
+                            <span id="headerWeatherTemp">રાજકોટ: 29°C</span>
+                            <span class="text-[10px] text-emerald-300 font-normal hidden lg:inline" id="headerWeatherHum">• ભેજ 60%</span>
+                            <span class="text-[10px] bg-emerald-700 text-white font-extrabold px-1.5 py-0.5 rounded shadow-xs" id="headerSprayBadge">સ્પ્રે યોગ્ય ✓</span>
+                        </div>
+                    </button>
+
+                    <!-- PWA Header Install App Button -->
+                    <button type="button" id="pwaInstallBtn" onclick="installKrushiMitraPWA()" title="Install KrushiMitra App on your Phone/PC (એપ ઇન્સ્ટોલ કરો)" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition shadow-sm cursor-pointer animate-pulse shrink-0">
+                        <i class="fa-solid fa-mobile-screen-button text-sm"></i>
+                        <span id="pwaInstallBtnTextDesktop" class="hidden sm:inline">Install App</span>
+                        <span id="pwaInstallBtnTextMobile" class="sm:hidden">ઇન્સ્ટોલ</span>
+                    </button>
+
+                    <button onclick="openFertilizerCalculator()" id="headerCalcBtn" title="Fertilizer Calculator (ખાતર કેલ્ક્યુલેટર)" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white transition border border-emerald-500 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-calculator text-emerald-300"></i>
+                        <span id="headerCalcBtnText" class="hidden sm:inline">ખાતર કેલ્ક્યુલેટર</span>
+                        <span id="headerCalcBtnTextMobile" class="sm:hidden">કેલ્ક્યુલેટર</span>
+                    </button>
+                    <button onclick="clearHistory()" id="clearChatBtn" title="Clear Conversation (વાતચીત સાફ કરો)" class="px-3 py-2 rounded-xl bg-emerald-900 hover:bg-emerald-800 text-emerald-200 hover:text-white transition border border-emerald-700 text-xs font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span id="clearChatBtnText" class="hidden sm:inline">Clear Chat</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Mobile Floating PWA Install Prompt Banner -->
+            <div id="mobilePwaBanner" class="fixed top-16 inset-x-3 z-50 bg-[#064e3b] text-white p-3.5 rounded-2xl shadow-2xl border border-emerald-400 flex items-center justify-between gap-3 hidden transition-all duration-300">
+                <div class="flex items-center gap-2.5">
+                    <img src="/static/icons/icon-192.png" alt="App Icon" class="w-10 h-10 rounded-xl shadow-xs border border-emerald-300">
+                    <div>
+                        <h4 id="mobilePwaTitle" class="font-extrabold text-xs text-white">KrushiMitra AI એપ ઇન્સ્ટોલ કરો</h4>
+                        <p id="mobilePwaDesc" class="text-[10px] text-emerald-200">હોમસ્ક્રીન પર 1-ક્લિકમાં ખુલે, પ્લેસ્ટોર વગર!</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="installKrushiMitraPWA()" id="mobilePwaInstallBtnText" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition shadow-xs">
+                        ઇન્સ્ટોલ
+                    </button>
+                    <button onclick="dismissPwaBanner()" class="p-1.5 text-emerald-300 hover:text-white" title="Close">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Canvas -->
+            <div id="chatBox" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#edf4ee]">
+                <!-- Welcome Hero Dashboard (Shown when empty) -->
+                <div id="welcomeCard" class="max-w-2xl mx-auto my-6 space-y-6 text-center animate-fade-in">
+                    <div class="w-20 h-20 mx-auto rounded-3xl bg-emerald-700 text-white flex items-center justify-center text-4xl shadow-xl border-2 border-emerald-400">
+                        🧑‍🌾
+                    </div>
+                    <div class="space-y-2">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-[#093829] tracking-tight">
+                            નમસ્તે! KrushiMitra માં આપનું સ્વાગત છે.
+                        </h2>
+                        <p class="text-sm text-[#334e43] font-medium leading-relaxed max-w-lg mx-auto">
+                            હું તમારો પ્રાકૃતિક ખેતી આસિસ્ટન્ટ છું. જીવામૃત, કીટ નિયંત્રણ, આચ્છાદન અને જમીનની ફળદ્રુપતા વિશે કોઈ પણ પ્રશ્ન પૂછો.
+                        </p>
+                    </div>
+
+                    <!-- 5 Interactive Action Cards (Including AI Photo Diagnosis) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                        <div onclick="triggerPhotoUpload()" class="krushi-card p-5 rounded-2xl krushi-card-hover cursor-pointer space-y-2 border-emerald-400 bg-gradient-to-r from-emerald-50 to-emerald-100/60 shadow-md sm:col-span-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5 text-[#059669] font-bold text-base">
+                                    <span class="text-2xl">📸</span>
+                                    <span>AI Crop Disease Diagnosis (ફોટો દ્વારા પાક રોગ નિદાન)</span>
+                                </div>
+                                <span class="text-xs bg-emerald-600 text-white font-bold px-3 py-1 rounded-full shadow-xs flex items-center gap-1.5">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Scan Plant Photo</span>
+                                </span>
+                            </div>
+                            <p class="text-xs text-[#334e43] font-medium leading-relaxed">
+                                તમારા રોગિષ્ટ પાક, પાંદડા કે જીવાતનો ફોટો અપલોડ કરો. આર્ટિફિશિયલ ઇન્ટેલિજન્સ રોગ પારખીને દેશી/પ્રાકૃતિક ઉપાય (નિમાસ્ત્ર, ખાટી છાશ, જીવામૃત) જણાવશે.
+                            </p>
+                        </div>
+
+                        <div onclick="openFertilizerCalculator()" class="krushi-card p-5 rounded-2xl krushi-card-hover cursor-pointer space-y-2 border-emerald-300 bg-gradient-to-br from-emerald-50/70 to-white">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5 text-[#059669] font-bold text-base">
+                                    <span class="text-xl">🧪</span>
+                                    <span>Jeevamrut Calculator</span>
+                                </div>
+                                <span class="text-[10px] bg-emerald-700 text-white font-extrabold px-2 py-0.5 rounded-full shadow-xs">Calculator</span>
+                            </div>
+                            <p class="text-xs text-[#475569] font-medium leading-relaxed">તમારી જમીન (વીઘા/એકર) અને પાક પસંદ કરી દેશી છાણ, ગૌમૂત્ર અને ગોળનું ચોક્કસ માપ મેળવો.</p>
+                        </div>
+
+                        <div onclick="sendQuickTopic('pest')" class="krushi-card p-5 rounded-2xl krushi-card-hover cursor-pointer space-y-2">
+                            <div class="flex items-center gap-2.5 text-[#059669] font-bold text-base">
+                                <span class="text-xl">🌿</span>
+                                <span id="cardPestTitle">Natural Pest Control (કુદરતી કીટ નિયંત્રણ)</span>
+                            </div>
+                            <p class="text-xs text-[#475569] font-medium leading-relaxed" id="cardPestDesc">નિમાસ્ત્ર, અગ્નિઅસ્ત્ર, દશપર્ણી અર્ક અને ખાટી છાશનો છંટકાવ.</p>
+                        </div>
+
+                        <div onclick="sendQuickTopic('soil')" class="krushi-card p-5 rounded-2xl krushi-card-hover cursor-pointer space-y-2">
+                            <div class="flex items-center gap-2.5 text-[#059669] font-bold text-base">
+                                <span class="text-xl">🌾</span>
+                                <span id="cardSoilTitle">Soil & Mulching (જમીન અને આચ્છાદન)</span>
+                            </div>
+                            <p class="text-xs text-[#475569] font-medium leading-relaxed" id="cardSoilDesc">જમીનની સુધારણા, અળસિયાની સક્રિયતા, અને કાષ્ઠ આચ્છાદન.</p>
+                        </div>
+
+                        <div onclick="sendQuickTopic('beejamrut')" class="krushi-card p-5 rounded-2xl krushi-card-hover cursor-pointer space-y-2">
+                            <div class="flex items-center gap-2.5 text-[#059669] font-bold text-base">
+                                <span class="text-xl">🐄</span>
+                                <span id="cardSeedTitle">Beejamrut Care (બીજામૃત માવજત)</span>
+                            </div>
+                            <p class="text-xs text-[#475569] font-medium leading-relaxed" id="cardSeedDesc">બીજ સંસ્કાર અને પાકને ફૂગ અને રોગ સામે રક્ષણ.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="typingIndicator" class="hidden px-6 py-2.5 bg-[#e2ece4] flex items-center gap-3 text-xs text-[#065f46] font-semibold border-t border-emerald-200">
+                <span class="flex gap-1.5">
+                    <span class="w-2.5 h-2.5 bg-[#059669] rounded-full animate-bounce"></span>
+                    <span class="w-2.5 h-2.5 bg-[#059669] rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-2.5 h-2.5 bg-[#059669] rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </span>
+                <span id="typingStatusText">KrushiMitra is analyzing and generating answer...</span>
+            </div>
+
+            <!-- Input Dock -->
+            <div class="p-3 sm:p-4 pb-20 lg:pb-4 bg-white border-t border-emerald-200 shadow-lg shrink-0">
+                <!-- Image Preview Bar (Appears when photo is attached) -->
+                <div id="imagePreviewContainer" class="max-w-4xl mx-auto mb-2.5 hidden">
+                    <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-300 rounded-2xl shadow-xs">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="preview-thumb-box cursor-pointer" onclick="openLightboxFromPreview()">
+                                <img id="imagePreviewThumb" src="" alt="Selected Plant Photo">
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-emerald-900 flex items-center gap-1.5 truncate">
+                                        <i class="fa-solid fa-leaf text-emerald-600"></i>
+                                        <span id="previewTitle">Crop Photo Attached</span>
+                                    </span>
+                                    <span id="imageSizeBadge" class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-full shrink-0">Photo</span>
+                                </div>
+                                <p class="text-[11px] text-emerald-700 mt-0.5 truncate" id="previewSubtext">Ready to diagnose! Click Send or ask a specific question.</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="clearSelectedImage()" title="Remove Attached Photo" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition shrink-0 ml-2">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="chatForm" onsubmit="handleSend(event)" class="max-w-4xl mx-auto flex items-center gap-2">
+                    <!-- Hidden Camera / File Input -->
+                    <input 
+                        type="file" 
+                        id="imageFileInput" 
+                        accept="image/*" 
+                        capture="environment" 
+                        class="hidden" 
+                        onchange="handleImageSelected(event)"
+                    />
+
+                    <!-- Camera / Upload Photo Button -->
+                    <button 
+                        type="button" 
+                        id="photoBtn" 
+                        onclick="triggerPhotoUpload()" 
+                        title="Upload/Capture Plant Photo for Disease Diagnosis (પાકનો ફોટો અપલોડ કરો)" 
+                        class="p-3.5 rounded-xl bg-emerald-50 text-[#059669] hover:bg-emerald-100 hover:text-emerald-800 transition border border-emerald-300 flex items-center justify-center shrink-0"
+                    >
+                        <i class="fa-solid fa-camera text-lg"></i>
+                    </button>
+
+                    <!-- Voice Mic Input Button -->
+                    <button 
+                        type="button" 
+                        id="micBtn" 
+                        onclick="toggleVoiceInput()" 
+                        title="Voice Dictation (બોલીને લખો)" 
+                        class="p-3.5 rounded-xl bg-emerald-50 text-[#059669] hover:bg-emerald-100 hover:text-emerald-800 transition border border-emerald-300 flex items-center justify-center shrink-0"
+                    >
+                        <i class="fa-solid fa-microphone text-lg" id="micIcon"></i>
+                    </button>
+
+                    <!-- Text Input Field -->
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="અહીં તમારો ખેતીને લગતો પ્રશ્ન લખો..." 
+                        class="flex-1 bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 px-4 py-3 rounded-xl text-sm sm:text-base focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 font-medium transition"
+                        autocomplete="off"
+                    />
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="sendBtn" 
+                        class="bg-[#059669] hover:bg-[#047857] text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-md flex items-center gap-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span id="sendBtnText">Send</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+
+        </main>
+
+        <!-- Mobile WhatsApp-Style Bottom Navigation Bar (Fixed on mobile screens, hidden on desktop) -->
+        <nav id="mobileBottomNav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#072e21] border-t border-emerald-800/90 shadow-[0_-4px_25px_rgba(0,0,0,0.35)] flex items-center justify-around px-1 py-1 safe-bottom">
+            <!-- Tab 1: Chat -->
+            <button type="button" onclick="switchMobileTab('chat')" id="mobile-tab-chat" class="mobile-nav-btn active flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-emerald-100 transition relative">
+                <i class="fa-solid fa-message text-base sm:text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold tracking-tight" id="mobileNavChatText">ચેટ</span>
+                <span class="active-indicator absolute bottom-0 w-8 h-1 bg-emerald-400 rounded-full"></span>
+            </button>
+
+            <!-- Tab 2: Mandi (Market Yard Rates) -->
+            <button type="button" onclick="switchMobileTab('mandi')" id="mobile-tab-mandi" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-emerald-300/75 hover:text-white transition relative">
+                <i class="fa-solid fa-chart-line text-base sm:text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold tracking-tight" id="mobileNavMandiText">યાર્ડ ભાવ</span>
+                <span class="active-indicator absolute bottom-0 w-8 h-1 bg-emerald-400 rounded-full"></span>
+            </button>
+
+            <!-- Tab 3: Weather (Live Weather & Spray) -->
+            <button type="button" onclick="switchMobileTab('weather')" id="mobile-tab-weather" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-emerald-300/75 hover:text-white transition relative">
+                <i class="fa-solid fa-cloud-sun-rain text-base sm:text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold tracking-tight" id="mobileNavWeatherText">હવામાન</span>
+                <span class="active-indicator absolute bottom-0 w-8 h-1 bg-emerald-400 rounded-full"></span>
+            </button>
+
+            <!-- Tab 4: Calendar (90-Day Crop Calendar) -->
+            <button type="button" onclick="switchMobileTab('calendar')" id="mobile-tab-calendar" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-emerald-300/75 hover:text-white transition relative">
+                <i class="fa-regular fa-calendar-days text-base sm:text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold tracking-tight" id="mobileNavCalendarText">કેલેન્ડર</span>
+                <span class="active-indicator absolute bottom-0 w-8 h-1 bg-emerald-400 rounded-full"></span>
+            </button>
+
+            <!-- Tab 5: Tools (Farmer Smart Tools) -->
+            <button type="button" onclick="switchMobileTab('tools')" id="mobile-tab-tools" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-emerald-300/75 hover:text-white transition relative">
+                <i class="fa-solid fa-flask-vial text-base sm:text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold tracking-tight" id="mobileNavToolsText">ટૂલ્સ</span>
+                <span class="active-indicator absolute bottom-0 w-8 h-1 bg-emerald-400 rounded-full"></span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Interactive Jeevamrut & Organic Fertilizer Calculator Modal -->
+    <div id="fertilizerCalculatorModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm overflow-y-auto" onclick="closeFertilizerCalculator()">
+        <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-emerald-200 overflow-hidden my-auto max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+            
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-[#072e21] to-[#0a4632] text-white p-5 sm:p-6 flex items-center justify-between border-b border-emerald-700 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-2xl shadow-md border border-emerald-400">
+                        🧪
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-lg sm:text-xl text-white tracking-wide" id="calcModalTitle">
+                                જીવામૃત અને પ્રાકૃતિક ખાતર કેલ્ક્યુલેટર
+                            </h3>
+                            <span class="text-[10px] bg-emerald-800 text-emerald-200 font-bold px-2.5 py-0.5 rounded-full border border-emerald-600">SPNF v3.0</span>
+                        </div>
+                        <p class="text-xs text-emerald-200 mt-0.5" id="calcModalSubtitle">
+                            તમારી જમીન અને પાક અનુસાર દેશી છાણ, ગૌમૂત્ર, ગોળ, બેસન અને પાણીનું સચોટ માપ
+                        </p>
+                    </div>
+                </div>
+                <button onclick="closeFertilizerCalculator()" title="Close Calculator (બંધ કરો)" class="w-9 h-9 rounded-xl bg-emerald-900/80 text-emerald-200 hover:text-white hover:bg-red-600 transition flex items-center justify-center border border-emerald-700 shrink-0 ml-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Modal Content -->
+            <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 bg-[#f4f8f5]">
+                
+                <!-- Preparation Type Selector Tabs -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-emerald-900 uppercase tracking-wider" id="prepTypeLabel">
+                        ૧. પ્રાકૃતિક બનાવટ પસંદ કરો (Select Preparation Type):
+                    </label>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-bold" id="prepTypeSelector">
+                        <button type="button" onclick="selectPrepType('jeevamrut')" id="prep-jeevamrut" class="prep-tab-btn active-prep-tab p-2.5 rounded-xl border flex flex-col items-center gap-1 transition shadow-xs">
+                            <span class="text-xl">🧪</span>
+                            <span class="truncate" id="tabText-jeevamrut">જીવામૃત</span>
+                            <span class="text-[10px] font-normal opacity-80 truncate" id="tabSub-jeevamrut">(Liquid)</span>
+                        </button>
+                        <button type="button" onclick="selectPrepType('ghanjeevamrut')" id="prep-ghanjeevamrut" class="prep-tab-btn p-2.5 rounded-xl border flex flex-col items-center gap-1 transition shadow-xs">
+                            <span class="text-xl">🌾</span>
+                            <span class="truncate" id="tabText-ghanjeevamrut">ઘનજીવામૃત</span>
+                            <span class="text-[10px] font-normal opacity-80 truncate" id="tabSub-ghanjeevamrut">(Solid Manure)</span>
+                        </button>
+                        <button type="button" onclick="selectPrepType('beejamrut')" id="prep-beejamrut" class="prep-tab-btn p-2.5 rounded-xl border flex flex-col items-center gap-1 transition shadow-xs">
+                            <span class="text-xl">🌱</span>
+                            <span class="truncate" id="tabText-beejamrut">બીજામૃત</span>
+                            <span class="text-[10px] font-normal opacity-80 truncate" id="tabSub-beejamrut">(Seed Care)</span>
+                        </button>
+                        <button type="button" onclick="selectPrepType('nimastra')" id="prep-nimastra" class="prep-tab-btn p-2.5 rounded-xl border flex flex-col items-center gap-1 transition shadow-xs">
+                            <span class="text-xl">🌿</span>
+                            <span class="truncate" id="tabText-nimastra">નિમાસ્ત્ર</span>
+                            <span class="text-[10px] font-normal opacity-80 truncate" id="tabSub-nimastra">(Pest Spray)</span>
+                        </button>
+                        <button type="button" onclick="selectPrepType('buttermilk')" id="prep-buttermilk" class="prep-tab-btn p-2.5 rounded-xl border flex flex-col items-center gap-1 transition shadow-xs col-span-2 sm:col-span-1">
+                            <span class="text-xl">🥛</span>
+                            <span class="truncate" id="tabText-buttermilk">ખાટી છાશ</span>
+                            <span class="text-[10px] font-normal opacity-80 truncate" id="tabSub-buttermilk">(Fungus Spray)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Controls: Land Size, Unit, Crop Type -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-emerald-200 shadow-xs">
+                    
+                    <!-- Land Size Numeric Input -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-slate-800" id="landSizeLabel">
+                            જમીનનું માપ (Land Size):
+                        </label>
+                        <div class="flex items-center">
+                            <button type="button" onclick="adjustLandSize(-1)" class="w-10 h-11 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-l-xl border border-r-0 border-slate-300 flex items-center justify-center text-lg active:bg-slate-300 transition">
+                                -
+                            </button>
+                            <input 
+                                type="number" 
+                                id="calcLandSize" 
+                                value="5" 
+                                min="0.25" 
+                                max="500" 
+                                step="0.5" 
+                                oninput="recalculateProportions()" 
+                                class="w-full h-11 text-center font-extrabold text-lg text-emerald-950 bg-emerald-50/50 border-y border-slate-300 focus:outline-none focus:bg-emerald-50"
+                            />
+                            <button type="button" onclick="adjustLandSize(1)" class="w-10 h-11 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-r-xl border border-l-0 border-slate-300 flex items-center justify-center text-lg active:bg-slate-300 transition">
+                                +
+                            </button>
+                        </div>
+                        <!-- Quick Preset Chips -->
+                        <div class="flex items-center gap-1.5 pt-1 text-[11px] font-semibold text-emerald-800">
+                            <span class="text-slate-400" id="quickPresetLabel">ઝડપી:</span>
+                            <button type="button" onclick="setLandSize(1)" class="px-2 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 transition">1</button>
+                            <button type="button" onclick="setLandSize(2)" class="px-2 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 transition">2</button>
+                            <button type="button" onclick="setLandSize(3)" class="px-2 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 transition">3</button>
+                            <button type="button" onclick="setLandSize(5)" class="px-2 py-0.5 rounded-lg bg-emerald-600 text-white font-bold transition">5</button>
+                            <button type="button" onclick="setLandSize(10)" class="px-2 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 transition">10</button>
+                        </div>
+                    </div>
+
+                    <!-- Land Unit Selector -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-slate-800" id="unitLabel">
+                            એકમ (Unit):
+                        </label>
+                        <select id="calcUnit" onchange="recalculateProportions()" class="w-full h-11 px-3 rounded-xl border border-slate-300 bg-white font-bold text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 text-sm">
+                            <option value="vigha" selected>વીઘા (Vigha - 0.4 Acre)</option>
+                            <option value="acre">એકર (Acre - 2.5 Vigha)</option>
+                            <option value="guntha">ગુંઠા (Guntha)</option>
+                            <option value="hectare">હેક્ટર (Hectare - 6.25 Vigha)</option>
+                        </select>
+                        <p class="text-[11px] text-slate-500 font-medium pt-1" id="unitHelperText">
+                            ૧ એકર = ૨.૫ વીઘા (ગુજરાત પ્રમાણ)
+                        </p>
+                    </div>
+
+                    <!-- Crop Type Selector -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-slate-800" id="cropLabel">
+                            પાક (Crop Type):
+                        </label>
+                        <select id="calcCrop" onchange="recalculateProportions()" class="w-full h-11 px-3 rounded-xl border border-slate-300 bg-white font-bold text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-200 text-sm">
+                            <option value="groundnut" selected>🥜 મગફળી (Groundnut)</option>
+                            <option value="cotton">⚪ કપાસ (Cotton)</option>
+                            <option value="wheat">🌾 ઘઉં (Wheat)</option>
+                            <option value="cumin">🌿 જીરું / વરિયાળી (Cumin)</option>
+                            <option value="vegetables">🌶️ શાકભાજી / મરચી (Vegetables)</option>
+                            <option value="castor">🌰 દિવેલા (Castor)</option>
+                            <option value="soybean">🟡 સોયાબીન (Soybean)</option>
+                            <option value="pulses">🫘 કઠોળ / ચણા / તુવેર (Pulses)</option>
+                            <option value="orchard">🥭 બાગાયત / ફળઝાડ (Fruit Trees)</option>
+                            <option value="general">🌱 સામાન્ય / અન્ય પાક (General)</option>
+                        </select>
+                        <p class="text-[11px] text-slate-500 font-medium pt-1" id="cropHelperText">
+                            ખાસ પાક મુજબ પિયત સમય પત્રક
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Live Dynamic Calculations: Exact Proportions Grid -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-extrabold text-[#093829] flex items-center gap-2" id="resultHeaderTitle">
+                            <span>📊 જરૂરી સામગ્રીનું ચોક્કસ માપ (Exact Proportions):</span>
+                        </h4>
+                        <span id="landSummaryPill" class="text-xs bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold px-3 py-1 rounded-full">
+                            5 વીઘા મગફળી માટે
+                        </span>
+                    </div>
+
+                    <!-- Dynamic Ingredients Cards Grid -->
+                    <div id="ingredientsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <!-- Rendered dynamically by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Preparation Method & Fermentation Guide -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-emerald-200 shadow-xs space-y-3">
+                    <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i>
+                        <span id="methodGuideTitle">બનાવવાની અને આથો લાવવાની સાચી રીત (Preparation Method):</span>
+                    </h4>
+                    <div id="methodStepsList" class="space-y-2 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                        <!-- Rendered dynamically by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Crop-Specific Application & Dosing Schedule -->
+                <div class="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-300 shadow-xs space-y-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">📅</span>
+                        <h4 class="text-xs font-bold text-emerald-950 uppercase tracking-wider" id="cropScheduleTitle">
+                            પાક માટે ક્યારે અને કઈ રીતે આપવું? (Application Schedule):
+                        </h4>
+                    </div>
+                    <div id="cropScheduleContent" class="text-xs sm:text-sm text-[#0d3b2b] leading-relaxed font-medium">
+                        <!-- Rendered dynamically by JavaScript -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="p-4 sm:p-5 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="text-xs text-slate-500 font-medium">
+                    💡 <span id="footerTip">Subhash Palekar Natural Farming (SPNF) સ્ટાન્ડર્ડ રેશિયો આધારિત</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyCalculatorRecipe()" id="calcCopyBtn" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center gap-1.5 border border-slate-300">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="calcCopyBtnText">Copy Recipe</span>
+                    </button>
+                    <button type="button" onclick="askAiAboutCalculation()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-2 shadow-md border border-emerald-400">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span id="calcAskAiBtnText">KrushiMitra ને પૂછો</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 1. Live Weather & Spray Advisory Modal -->
+    <div id="weatherAdvisoryModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm overflow-y-auto" onclick="closeWeatherModal()">
+        <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-emerald-200 overflow-hidden my-auto max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-[#072e21] to-[#094732] text-white p-5 flex items-center justify-between border-b border-emerald-700 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-sky-600 flex items-center justify-center text-2xl shadow-md border border-sky-400">
+                        🌦️
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-lg text-white" id="weatherModalTitle">લાઈવ હવામાન & સ્પ્રે સલાહકાર</h3>
+                        <p class="text-xs text-sky-200" id="weatherModalSub">Open-Meteo • લાઈવ ભેજ, વરસાદ અને સ્પ્રે ચેતવણી</p>
+                    </div>
+                </div>
+                <button onclick="closeWeatherModal()" class="w-9 h-9 rounded-xl bg-emerald-900/80 text-emerald-200 hover:text-white hover:bg-red-600 transition flex items-center justify-center border border-emerald-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#f4f8f5]">
+                <!-- District Selector -->
+                <div class="flex items-center justify-between bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs">
+                    <label class="text-xs font-bold text-emerald-950 flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-emerald-600"></i>
+                        <span id="weatherDistrictLabel">જિલ્લો પસંદ કરો (Select District):</span>
+                    </label>
+                    <select id="weatherDistrictSelect" onchange="fetchLiveWeatherData(this.value)" class="bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold text-xs py-1.5 px-3 rounded-xl focus:outline-none">
+                        <option value="Rajkot" selected>રાજકોટ (Rajkot)</option>
+                        <option value="Gondal">ગોંડલ (Gondal)</option>
+                        <option value="Junagadh">જૂનાગઢ (Junagadh)</option>
+                        <option value="Amreli">અમરેલી (Amreli)</option>
+                        <option value="Botad">બોટાદ (Botad)</option>
+                        <option value="Jamnagar">જામનગર (Jamnagar)</option>
+                        <option value="Bhavnagar">ભાવનગર (Bhavnagar)</option>
+                        <option value="Surendranagar">સુરેન્દ્રનગર (Surendranagar)</option>
+                        <option value="Mehsana">મહેસાણા (Mehsana)</option>
+                        <option value="Surat">સુરત (Surat)</option>
+                    </select>
+                </div>
+
+                <!-- Live Spray Suitability Alert Banner -->
+                <div id="weatherSprayAlert" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 flex items-start gap-3 shadow-xs">
+                    <span class="text-2xl shrink-0">✅</span>
+                    <div>
+                        <h4 class="font-bold text-emerald-950 text-sm" id="sprayStatusTitle">આજે છંટકાવ માટે ઉત્તમ હવામાન છે!</h4>
+                        <p class="text-xs text-emerald-800 mt-0.5 leading-relaxed" id="sprayStatusDesc">ભેજ અનુકૂળ છે અને વરસાદની શક્યતા ઓછી છે. સવારે અથવા સાંજે નીમાસ્ત્ર કે ખાટી છાશનો છંટકાવ કરી શકાય છે.</p>
+                    </div>
+                </div>
+
+                <!-- 4 Weather Metric Cards Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="bg-white p-3 rounded-2xl border border-emerald-200 text-center shadow-xs">
+                        <span class="text-xl">🌡️</span>
+                        <p class="text-[11px] text-slate-500 font-bold mt-1" id="weatherTempLabel">તાપમાન</p>
+                        <p class="text-base font-extrabold text-emerald-950" id="weatherTemp">29°C</p>
+                        <p class="text-[10px] text-slate-400" id="weatherMaxTempSub">મહત્તમ 33°C</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl border border-emerald-200 text-center shadow-xs">
+                        <span class="text-xl">💧</span>
+                        <p class="text-[11px] text-slate-500 font-bold mt-1" id="weatherHumLabel">હવામાં ભેજ</p>
+                        <p class="text-base font-extrabold text-emerald-950" id="weatherHumidity">62%</p>
+                        <p class="text-[10px] text-emerald-600" id="weatherHumSub">સામાન્ય ભેજ</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl border border-emerald-200 text-center shadow-xs">
+                        <span class="text-xl">🌧️</span>
+                        <p class="text-[11px] text-slate-500 font-bold mt-1" id="weatherRainLabel">વરસાદ શક્યતા</p>
+                        <p class="text-base font-extrabold text-emerald-950" id="weatherRain">15%</p>
+                        <p class="text-[10px] text-emerald-600 font-bold" id="weatherRainSub">ઓછી શક્યતા</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl border border-emerald-200 text-center shadow-xs">
+                        <span class="text-xl">💨</span>
+                        <p class="text-[11px] text-slate-500 font-bold mt-1" id="weatherWindLabel">પવનની ગતિ</p>
+                        <p class="text-base font-extrabold text-emerald-950" id="weatherWind">12 km/h</p>
+                        <p class="text-[10px] text-slate-400" id="weatherWindSub">શાંત પવન</p>
+                    </div>
+                </div>
+
+                <!-- 3-Day Spray Outlook Forecast Cards -->
+                <div class="bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-xs space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h5 class="font-extrabold text-xs text-emerald-950 flex items-center gap-1.5">
+                            <i class="fa-regular fa-calendar-check text-emerald-600"></i>
+                            <span id="weatherForecastTitle">આગામી ૩ દિવસની સ્પ્રે આગાહી (3-Day Spray Forecast):</span>
+                        </h5>
+                        <span class="text-[10px] text-slate-400 font-semibold" id="weatherSourceBadge">Open-Meteo Live</span>
+                    </div>
+                    <div id="weather3DayForecast" class="grid grid-cols-3 gap-2 text-center text-xs">
+                        <!-- Populated dynamically by chat.js -->
+                    </div>
+                </div>
+
+                <!-- Organic Advisory Tips Box -->
+                <div class="bg-sky-50 border border-sky-200 p-3.5 rounded-2xl">
+                    <h5 class="font-bold text-xs text-sky-900 flex items-center gap-1.5 mb-1.5">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                        <span id="weatherTipsTitle">કુદરતી ખેતી હવામાન ટીપ્સ (Natural Farming Advisory):</span>
+                    </h5>
+                    <ul class="text-xs text-sky-950 space-y-1 list-disc list-inside">
+                        <li id="weatherTip1">જ્યારે ભેજ ૮૦% થી વધુ હોય ત્યારે ખાટી છાશ + હિંગનો સ્પ્રે કરવો જેથી ફૂગ ન આવે.</li>
+                        <li id="weatherTip2">તેજ તડકો (બપોરે ૧૨ થી ૩) હોય ત્યારે ક્યારેય કોઈ પણ અર્ક કે જીવામૃત ન છાંટવું.</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="p-4 bg-white border-t border-emerald-100 flex items-center justify-between">
+                <button onclick="askAiAboutWeather()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span id="weatherAskAiBtnText">KrushiMitra ને પૂછો</span>
+                </button>
+                <button onclick="closeWeatherModal()" id="weatherCloseBtnText" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">બંધ કરો</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. APMC Mandi Rates Modal -->
+    <div id="mandiRatesModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm overflow-y-auto" onclick="closeMandiModal()">
+        <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-emerald-200 overflow-hidden my-auto max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-[#072e21] to-[#0a4632] text-white p-5 flex items-center justify-between border-b border-emerald-700 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-600 flex items-center justify-center text-2xl shadow-md border border-amber-400">
+                        📊
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-extrabold text-lg text-white" id="mandiModalTitle">APMC માર્કેટ યાર્ડ લાઈવ બજાર ભાવ</h3>
+                            <span class="text-[10px] bg-emerald-800 text-emerald-200 font-bold px-2 py-0.5 rounded-full border border-emerald-600 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span id="mandiDateBadge">લાઈવ અપડેટ</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-amber-200" id="mandiModalSub">ગોંડલ • રાજકોટ • ઊંઝા • બોટાદ • અમરેલી • જૂનાગઢ (ભાવ ₹/૨૦ કિલો દીઠ)</p>
+                    </div>
+                </div>
+                <button onclick="closeMandiModal()" title="Close (બંધ કરો)" class="w-9 h-9 rounded-xl bg-emerald-900/80 text-emerald-200 hover:text-white hover:bg-red-600 transition flex items-center justify-center border border-emerald-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#f4f8f5]">
+                
+                <!-- Top Highlights Grid: 4 Leader Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="mandiLeadersGrid">
+                    <div class="bg-white p-3 rounded-2xl border border-amber-200 shadow-sm hover:border-amber-400 transition">
+                        <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+                            <span>⚪ કપાસ લીડર</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-1.5 py-0.2 rounded">ગોંડલ</span>
+                        </div>
+                        <p class="text-base sm:text-lg font-black text-emerald-900 mt-1">₹1,725 <span class="text-xs font-normal text-slate-400">/મણ</span></p>
+                        <p class="text-[10px] text-emerald-700 font-bold mt-0.5">📈 તેજી (+₹25)</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl border border-amber-200 shadow-sm hover:border-amber-400 transition">
+                        <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+                            <span>🥜 મગફળી લીડર</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-1.5 py-0.2 rounded">રાજકોટ</span>
+                        </div>
+                        <p class="text-base sm:text-lg font-black text-emerald-900 mt-1">₹1,510 <span class="text-xs font-normal text-slate-400">/મણ</span></p>
+                        <p class="text-[10px] text-emerald-700 font-bold mt-0.5">📈 તેજી (+₹30)</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl border border-amber-200 shadow-sm hover:border-amber-400 transition">
+                        <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+                            <span>🌿 જીરું લીડર</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-1.5 py-0.2 rounded">ઊંઝા</span>
+                        </div>
+                        <p class="text-base sm:text-lg font-black text-emerald-900 mt-1">₹5,520 <span class="text-xs font-normal text-slate-400">/મણ</span></p>
+                        <p class="text-[10px] text-emerald-700 font-bold mt-0.5">📈 તેજી (+₹75)</p>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-2xl border border-amber-200 shadow-sm hover:border-amber-400 transition">
+                        <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+                            <span>🌾 ઘઉં (ટુકડા)</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-1.5 py-0.2 rounded">રાજકોટ</span>
+                        </div>
+                        <p class="text-base sm:text-lg font-black text-emerald-900 mt-1">₹585 <span class="text-xs font-normal text-slate-400">/મણ</span></p>
+                        <p class="text-[10px] text-emerald-700 font-bold mt-0.5">📈 તેજી (+₹10)</p>
+                    </div>
+                </div>
+
+                <!-- Gondal vs Rajkot Yard Comparison Strip -->
+                <div class="bg-emerald-50 border border-emerald-300 p-3 sm:p-3.5 rounded-2xl shadow-xs">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-extrabold text-xs text-emerald-950 flex items-center gap-1.5">
+                            <i class="fa-solid fa-scale-balanced text-emerald-700"></i>
+                            <span id="gondalVsRajkotTitle">ગોંડલ vs રાજકોટ યાર્ડ સરખામણી (Gondal vs Rajkot Comparison):</span>
+                        </h4>
+                        <span class="text-[10px] text-emerald-800 font-bold bg-white px-2 py-0.5 rounded-full border border-emerald-200" id="gondalVsRajkotBadge">ક્યાં વેચવું ફાયદાકારક?</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs" id="gondalVsRajkotContainer">
+                        <!-- Populated dynamically by chat.js -->
+                    </div>
+                </div>
+
+                <!-- Dual Filter Bar: Yard Dropdown + Search + Crop Pills -->
+                <div class="space-y-2.5 bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                        <!-- Mandi Yard Selector -->
+                        <div class="flex items-center gap-2 flex-1">
+                            <label class="text-xs font-bold text-emerald-950 shrink-0" id="mandiYardLabel">🏛️ યાર્ડ:</label>
+                            <select id="mandiYardFilter" onchange="applyMandiFilters()" class="w-full sm:w-48 bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold text-xs py-1.5 px-2.5 rounded-xl focus:outline-none">
+                                <option value="all" id="optAllYards" selected>બધા માર્કેટ યાર્ડ (All Yards)</option>
+                                <option value="gondal">ગોંડલ (Gondal)</option>
+                                <option value="rajkot">રાજકોટ (Rajkot)</option>
+                                <option value="unjha">ઊંઝા (Unjha)</option>
+                                <option value="botad">બોટાદ (Botad)</option>
+                                <option value="amreli">અમરેલી (Amreli)</option>
+                                <option value="junagadh">જૂનાગઢ (Junagadh)</option>
+                            </select>
+                        </div>
+
+                        <!-- Live Search Input -->
+                        <div class="relative w-full sm:w-56">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="mandiSearchInput" onkeyup="applyMandiFilters()" placeholder="પાક કે યાર્ડ શોધો..." class="w-full bg-slate-50 border border-emerald-300 text-xs pl-8 pr-3 py-1.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- Crop Filter Pills -->
+                    <div class="flex flex-wrap gap-1.5 text-xs font-bold pt-1 border-t border-emerald-100" id="mandiCropFilters">
+                        <button type="button" onclick="filterMandiByCrop('all')" id="cropFilterAll" class="mandi-crop-btn active-filter px-3 py-1.5 rounded-xl bg-emerald-600 text-white border border-emerald-500 shadow-xs">બધા પાક</button>
+                        <button type="button" onclick="filterMandiByCrop('કપાસ')" id="cropFilterCotton" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">⚪ કપાસ</button>
+                        <button type="button" onclick="filterMandiByCrop('મગફળી')" id="cropFilterGroundnut" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🥜 મગફળી</button>
+                        <button type="button" onclick="filterMandiByCrop('જીરું')" id="cropFilterCumin" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🌿 જીરું</button>
+                        <button type="button" onclick="filterMandiByCrop('ઘઉં')" id="cropFilterWheat" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🌾 ઘઉં</button>
+                        <button type="button" onclick="filterMandiByCrop('ચણા')" id="cropFilterChana" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🌰 ચણા</button>
+                        <button type="button" onclick="filterMandiByCrop('તલ')" id="cropFilterSesame" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🌱 તલ</button>
+                        <button type="button" onclick="filterMandiByCrop('ધાણા')" id="cropFilterCoriander" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🌿 ધાણા</button>
+                        <button type="button" onclick="filterMandiByCrop('રાયડો')" id="cropFilterMustard" class="mandi-crop-btn px-3 py-1.5 rounded-xl bg-slate-50 text-emerald-950 border border-emerald-200 hover:bg-emerald-50">🟡 રાયડો</button>
+                    </div>
+                </div>
+
+                <!-- Mandi Rates Table -->
+                <div class="overflow-x-auto bg-white rounded-2xl border border-emerald-200 shadow-xs">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-[#072e21] text-white font-bold">
+                            <tr>
+                                <th class="p-3" id="thCropName">પાકનું નામ (Crop)</th>
+                                <th class="p-3" id="thMandiYard">યાર્ડ (Mandi)</th>
+                                <th class="p-3 text-center" id="thMinPrice">નીચો ભાવ</th>
+                                <th class="p-3 text-center" id="thMaxPrice">ઊંચો ભાવ</th>
+                                <th class="p-3 text-center" id="thAvgPrice">સરેરાશ ભાવ</th>
+                                <th class="p-3 text-center" id="thArrivals">આવક</th>
+                                <th class="p-3 text-center" id="thTrend">ટ્રેન્ડ</th>
+                                <th class="p-3 text-center" id="thAction">ક્રિયા</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mandiTableBody" class="divide-y divide-emerald-100 font-medium text-slate-800">
+                            <!-- Populated dynamically by chat.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mandi Highlight Note -->
+                <p class="text-[11px] text-slate-500 italic text-center" id="mandiFootnote">* નોંધ: તમામ ભાવો પ્રતિ ૨૦ કિલોગ્રામ (૧ મણ) દીઠ છે. દરરોજ સાંજે ૬:૦૦ કલાકે નવા ભાવો અપડેટ થાય છે.</p>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 bg-white border-t border-emerald-100 flex items-center justify-between">
+                <button onclick="askAiAboutMandi()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span id="mandiAskAiBtnText">KrushiMitra ને પૂછો</span>
+                </button>
+                <button onclick="closeMandiModal()" id="mandiCloseBtnText" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">બંધ કરો</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 90-Day Natural Farming Crop Calendar Modal -->
+    <div id="cropCalendarModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm overflow-y-auto" onclick="closeCropCalendarModal()">
+        <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-emerald-200 overflow-hidden my-auto max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-[#072e21] to-[#094732] text-white p-5 flex items-center justify-between border-b border-emerald-700 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-600 flex items-center justify-center text-2xl shadow-md border border-amber-400">
+                        📅
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-lg text-white" id="calendarModalTitle">૯૦ દિવસ પ્રાકૃતિક પાક કેલેન્ડર</h3>
+                            <span class="text-[10px] bg-emerald-800 text-emerald-200 font-bold px-2 py-0.5 rounded-full border border-emerald-600">SPNF v3.0</span>
+                        </div>
+                        <p class="text-xs text-amber-200" id="calendarModalSub">સુભાષ પાલેકર પદ્ધતિ • વાવણીની તારીખ મુજબ સ્ટેપ-બાય-સ્ટેપ શિડ્યુલ</p>
+                    </div>
+                </div>
+                <button onclick="closeCropCalendarModal()" title="Close (બંધ કરો)" class="w-9 h-9 rounded-xl bg-emerald-900/80 text-emerald-200 hover:text-white hover:bg-red-600 transition flex items-center justify-center border border-emerald-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#f4f8f5]">
+                
+                <!-- Inputs & Action Bar -->
+                <div class="bg-white p-4 rounded-2xl border border-emerald-200 shadow-xs space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-950 mb-1" id="calendarCropSelectLabel">૧. પાક પસંદ કરો (Select Crop):</label>
+                            <select id="calendarCropSelect" onchange="renderCropCalendarSchedule()" class="w-full bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold text-xs py-2 px-3 rounded-xl focus:outline-none">
+                                <option value="groundnut" id="optCropGroundnut" selected>🥜 મગફળી (Groundnut - ૯૦ થી ૧૦૫ દિવસ)</option>
+                                <option value="cotton" id="optCropCotton">⚪ કપાસ (Cotton - ૯૦ દિવસ માવજત)</option>
+                                <option value="wheat" id="optCropWheat">🌾 ઘઉં (Wheat - ૯૦ થી ૧૦૦ દિવસ)</option>
+                                <option value="cumin" id="optCropCumin">🌿 જીરું (Cumin - ૯૦ દિવસ)</option>
+                                <option value="chana" id="optCropChana">🌰 ચણા (Chickpea - ૮૫ થી ૯૫ દિવસ)</option>
+                                <option value="vegetables" id="optCropVegetables">🥬 શાકભાજી (રીંગણ, મરચી, ટામેટાં)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-950 mb-1" id="calendarSowingDateLabel">૨. વાવણી તારીખ (Sowing Date):</label>
+                            <input type="date" id="calendarSowingDate" onchange="renderCropCalendarSchedule()" class="w-full bg-emerald-50 border border-emerald-300 text-emerald-950 font-bold text-xs py-2 px-3 rounded-xl focus:outline-none">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" onclick="copyScheduleToClipboard()" id="copyScheduleBtn" class="w-full py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs">
+                                <i class="fa-regular fa-copy"></i>
+                                <span id="copyScheduleBtnText">વોટ્સએપ શિડ્યુલ કોપી કરો</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Progress & Milestone Status Banner -->
+                <div id="calendarStatusBanner" class="bg-emerald-50 border border-emerald-300 p-4 rounded-2xl shadow-xs space-y-2">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">🌱</span>
+                            <div>
+                                <h4 class="font-extrabold text-xs sm:text-sm text-emerald-950" id="calendarCurrentCropTitle">મગફળી પાકનું ૯૦ દિવસનું શિડ્યુલ</h4>
+                                <p class="text-xs text-emerald-800" id="calendarCurrentStageDesc">વાવણી તારીખથી સ્ટેપ-બાય-સ્ટેપ પ્રાકૃતિક માવજત</p>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-emerald-200 text-emerald-900 font-extrabold px-3 py-1 rounded-full border border-emerald-300" id="calendarProgressBadge">
+                            દિવસ ૨૫ / ૯૦ (૨૮%)
+                        </span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-emerald-200/80 rounded-full h-2.5 overflow-hidden">
+                        <div id="calendarProgressBar" class="bg-emerald-600 h-2.5 rounded-full transition-all duration-500" style="width: 28%"></div>
+                    </div>
+                </div>
+
+                <!-- 90-Day Step-by-Step Schedule Cards -->
+                <div id="calendarTimelineCards" class="space-y-3">
+                    <!-- Populated dynamically by chat.js -->
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 bg-white border-t border-emerald-100 flex items-center justify-between">
+                <button onclick="askAiAboutCalendar()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span id="calendarAskAiBtnText">KrushiMitra ને પૂછો</span>
+                </button>
+                <button onclick="closeCropCalendarModal()" id="calendarCloseBtnText" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">બંધ કરો</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Organic Medicine Recipes & Govt Subsidy Modal -->
+    <div id="medicineLibraryModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm overflow-y-auto" onclick="closeMedicineLibraryModal()">
+        <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-emerald-200 overflow-hidden my-auto max-h-[92vh] flex flex-col" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-[#072e21] to-[#083e2c] text-white p-5 flex items-center justify-between border-b border-emerald-700 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-teal-600 flex items-center justify-center text-2xl shadow-md border border-teal-400">
+                        🌿
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-lg text-white" id="medicineModalTitle">દેશી દવા લાઈબ્રેરી & સરકારી સહાય</h3>
+                        <p class="text-xs text-teal-200" id="medicineModalSub">નીમાસ્ત્ર, અગ્નિઅસ્ત્ર, દશપર્ણી અર્ક & i-Khedut યોજનાઓ</p>
+                    </div>
+                </div>
+                <button onclick="closeMedicineLibraryModal()" class="w-9 h-9 rounded-xl bg-emerald-900/80 text-emerald-200 hover:text-white hover:bg-red-600 transition flex items-center justify-center border border-emerald-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#f4f8f5]">
+                <!-- Sub-Tabs: Recipes vs Govt Subsidy -->
+                <div class="flex items-center gap-2 bg-emerald-100/60 p-1 rounded-2xl border border-emerald-200">
+                    <button onclick="switchMedicineTab('recipes')" id="medTabRecipes" class="flex-1 py-2 rounded-xl text-xs font-bold transition text-white bg-emerald-700 shadow-xs">🌿 દેશી અર્ક બનાવવાની રીતો (Recipes)</button>
+                    <button onclick="switchMedicineTab('subsidy')" id="medTabSubsidy" class="flex-1 py-2 rounded-xl text-xs font-bold transition text-emerald-950 hover:bg-emerald-200/60">🏛️ પ્રાકૃતિક ખેતી સરકારી સહાય (Subsidy)</button>
+                </div>
+
+                <!-- Section A: Recipes List -->
+                <div id="medicineRecipesSection" class="space-y-3">
+                    <!-- Populated dynamically by chat.js -->
+                </div>
+
+                <!-- Section B: Subsidy Guide (Hidden by default) -->
+                <div id="medicineSubsidySection" class="space-y-3 hidden">
+                    <!-- Populated dynamically by chat.js -->
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="p-4 bg-white border-t border-emerald-100 flex items-center justify-between">
+                <button onclick="askAiAboutMedicine()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span id="medicineAskAiBtnText">KrushiMitra ને પૂછો</span>
+                </button>
+                <button onclick="closeMedicineLibraryModal()" id="medicineCloseBtnText" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">બંધ કરો</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Mobile Quick Tools Picker Sheet (Opens when tapping 5th Tab 'Tools' on mobile) -->
+    <div id="toolsHubModal" class="fixed inset-0 bg-slate-950/80 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm" onclick="closeToolsHubModal()">
+        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-emerald-200 p-5 space-y-3" onclick="event.stopPropagation()">
+            <div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-2 sm:hidden"></div>
+            <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
+                <h4 class="font-bold text-sm text-emerald-950 flex items-center gap-2" id="toolsHubTitle">
+                    <span>🧪 કિસાન સ્માર્ટ ટૂલ્સ (Farm Tools)</span>
+                </h4>
+                <button onclick="closeToolsHubModal()" class="text-slate-400 hover:text-slate-700 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-2 pt-1">
+                <button onclick="closeToolsHubModal(); openFertilizerCalculator();" class="w-full p-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 flex items-center gap-3 transition">
+                    <span class="text-2xl">🧪</span>
+                    <div class="text-left">
+                        <p class="font-bold text-emerald-950 text-xs" id="toolsHubCalcTitle">ખાતર કેલ્ક્યુલેટર (Fertilizer Calculator)</p>
+                        <p class="text-[11px] text-emerald-700" id="toolsHubCalcSub">વીઘા દીઠ જીવામૃત, ઘનજીવામૃતનું સચોટ માપ</p>
+                    </div>
+                </button>
+                <button onclick="closeToolsHubModal(); openMedicineLibraryModal();" class="w-full p-3.5 rounded-2xl bg-teal-50 hover:bg-teal-100 border border-teal-300 flex items-center gap-3 transition">
+                    <span class="text-2xl">🌿</span>
+                    <div class="text-left">
+                        <p class="font-bold text-teal-950 text-xs" id="toolsHubMedTitle">દેશી દવા લાઈબ્રેરી (Organic Medicine)</p>
+                        <p class="text-[11px] text-teal-700" id="toolsHubMedSub">નીમાસ્ત્ર, અગ્નિઅસ્ત્ર, દશપર્ણી અર્ક બનાવવાની રીત</p>
+                    </div>
+                </button>
+                <button onclick="closeToolsHubModal(); openMedicineLibraryModal(); switchMedicineTab('subsidy');" class="w-full p-3.5 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-300 flex items-center gap-3 transition">
+                    <span class="text-2xl">🏛️</span>
+                    <div class="text-left">
+                        <p class="font-bold text-amber-950 text-xs" id="toolsHubSubTitle">સરકારી સહાય યોજનાઓ (Govt Subsidy)</p>
+                        <p class="text-[11px] text-amber-700" id="toolsHubSubSub">દેશી ગાય ₹૯૦૦/માસ સહાય અને કીટ સબસિડી</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox Modal for Full View -->
+    <div id="imageLightboxModal" class="fixed inset-0 bg-slate-950/85 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-[92vh] bg-slate-900 rounded-2xl p-2.5 border border-slate-700 shadow-2xl flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" title="Close (બંધ કરો)" class="absolute -top-3.5 -right-3.5 w-9 h-9 rounded-full bg-slate-800 text-white flex items-center justify-center hover:bg-red-600 transition shadow-lg border border-slate-600">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+            <img id="lightboxImage" src="" alt="Enlarged crop photo" class="max-w-full max-h-[82vh] rounded-xl object-contain shadow-md">
+            <p id="lightboxCaption" class="text-xs text-slate-300 font-medium mt-2 px-2 text-center"></p>
+        </div>
+    </div>
+
+    <!-- Application Script with cache bust -->
+    <script src="{{ url_for('static', filename='js/chat.js') }}?v=3.5"></script>
+</body>
+</html>

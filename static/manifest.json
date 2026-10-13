@@ -1,0 +1,31 @@
+{
+  "name": "કૃષિમિત્ર AI - પ્રાકૃતિક ખેતી સહાયક",
+  "short_name": "KrushiMitra",
+  "description": "સુભાષ પાલેકર પ્રાકૃતિક ખેતી (SPNF) AI સલાહકાર, લાઈવ APMC બજાર ભાવ અને સ્માર્ટ હવામાન",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#064e3b",
+  "orientation": "portrait",
+  "lang": "gu",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

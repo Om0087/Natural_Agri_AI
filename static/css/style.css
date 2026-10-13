@@ -1,0 +1,289 @@
+/* KrushiMitra Modern High-Contrast Theme v3.0 */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-main: #edf4ee;
+    --bg-card: #ffffff;
+    --header-bg: #093829;
+    --sidebar-bg: #072e21;
+    --text-dark: #0f291e;
+    --text-muted: #4b6358;
+    --emerald-primary: #059669;
+    --emerald-hover: #047857;
+    --emerald-light: #d1fae5;
+    --accent-orange: #d97706;
+    --border-color: #c7e5d6;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+}
+
+/* Card & Container Utility */
+.krushi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px -2px rgba(9, 56, 41, 0.08);
+}
+
+.krushi-card-hover {
+    transition: all 0.25s ease-in-out;
+}
+.krushi-card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(9, 56, 41, 0.15);
+    border-color: var(--emerald-primary);
+}
+
+/* Mobile WhatsApp-Style Bottom Navigation */
+.safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 6px);
+}
+
+.mobile-nav-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+}
+
+.mobile-nav-btn:active {
+    transform: scale(0.92);
+}
+
+.mobile-nav-btn.active {
+    color: #ffffff !important;
+}
+
+.mobile-nav-btn.active i {
+    color: #34d399 !important; /* emerald-400 */
+    transform: translateY(-2px);
+}
+
+.mobile-nav-btn.active .active-indicator {
+    display: block !important;
+}
+
+.mobile-nav-btn .active-indicator {
+    display: none;
+    box-shadow: 0 0 10px #34d399;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #e2ece4;
+}
+::-webkit-scrollbar-thumb {
+    background: #059669;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #047857;
+}
+
+/* Markdown Formatting inside AI Bubbles */
+.markdown-body {
+    color: #1e293b;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+.markdown-body p {
+    margin-bottom: 0.75em;
+}
+.markdown-body p:last-child {
+    margin-bottom: 0;
+}
+.markdown-body strong {
+    color: #065f46;
+    font-weight: 700;
+}
+.markdown-body ul {
+    list-style-type: disc;
+    margin-left: 1.4em;
+    margin-bottom: 0.75em;
+}
+.markdown-body ol {
+    list-style-type: decimal;
+    margin-left: 1.4em;
+    margin-bottom: 0.75em;
+}
+.markdown-body li {
+    margin-bottom: 0.3em;
+}
+.markdown-body code {
+    background-color: #e2e8f0;
+    color: #065f46;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25em;
+    font-size: 0.875em;
+    font-family: monospace;
+}
+.markdown-body blockquote {
+    border-left: 4px solid #059669;
+    padding-left: 1em;
+    color: #334155;
+    background: #f0fdf4;
+    border-radius: 0 0.5rem 0.5rem 0;
+    margin: 0.75em 0;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
+/* Animations */
+.animate-fade-in {
+    animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Image Upload Preview & Attachment Bar */
+#imagePreviewContainer {
+    animation: fadeIn 0.2s ease-out;
+}
+
+.preview-thumb-box {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #10b981;
+    background: #064e3b;
+    flex-shrink: 0;
+}
+
+.preview-thumb-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Diagnosis Result Card Styling */
+.diagnosis-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.diagnosis-header-card {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+}
+
+.chat-image-attachment {
+    max-width: 280px;
+    max-height: 220px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 2px solid #a7f3d0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.chat-image-attachment:hover {
+    transform: scale(1.02);
+}
+
+/* Lightbox Modal */
+#imageLightboxModal {
+    backdrop-filter: blur(4px);
+}
+
+/* Fertilizer Calculator Modal & Widgets */
+#fertilizerCalculatorModal {
+    backdrop-filter: blur(5px);
+}
+
+.prep-tab-btn {
+    background-color: #ffffff;
+    color: #334155;
+    border-color: #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+.prep-tab-btn:hover {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+.active-prep-tab {
+    background-color: #064e3b !important;
+    color: #ffffff !important;
+    border-color: #059669 !important;
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.25) !important;
+}
+
+.ingredient-card {
+    background: #ffffff;
+    border: 1.5px solid #d1fae5;
+    border-radius: 16px;
+    padding: 14px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.ingredient-card:hover {
+    border-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(6, 78, 59, 0.1);
+}
+
+.ingredient-value {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #064e3b;
+    line-height: 1.2;
+}
+
+.ingredient-unit {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #059669;
+    margin-left: 3px;
+}
+.mandi-crop-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mandi-crop-btn.active-filter {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+    border-color: #047857 !important;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25) !important;
+}

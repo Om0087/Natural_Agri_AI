@@ -1,0 +1,63 @@
+# Environment Variables (DO NOT COMMIT SECRETS)
+.env
+.env.local
+.env.*.local
+
+# Allow example file
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Vector Database & Embeddings Cache
+rag_data/chroma_db/
+rag_data/vector_db/
+*.sqlite3
+
+# Logs & Databases
+*.log
+*.sqlite
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
